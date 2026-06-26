@@ -37,10 +37,10 @@ function App() {
     <div className="min-h-screen bg-gradient-to-b from-sky-900 via-sky-800 to-sky-900 text-white">
       <div className="max-w-5xl mx-auto px-4 py-6 md:py-10 space-y-6">
         <LocationHeader
+          cityName={geo.cityName}
           latitude={geo.latitude}
           longitude={geo.longitude}
           accuracy={geo.accuracy}
-          timezone={weather.timezone}
           lastUpdated={weather.current?.time ?? null}
           onRefresh={() => {
             weather.refresh()

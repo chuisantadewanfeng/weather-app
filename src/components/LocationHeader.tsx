@@ -1,8 +1,8 @@
 interface LocationHeaderProps {
+  cityName: string | null
   latitude: number | null
   longitude: number | null
   accuracy: number | null
-  timezone: string | null
   lastUpdated: string | null
   onRefresh: () => void
 }
@@ -18,16 +18,12 @@ function formatTime(isoString: string): string {
   return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 }
 
-export function LocationHeader({ latitude, longitude, accuracy, timezone, lastUpdated, onRefresh }: LocationHeaderProps) {
+export function LocationHeader({ cityName, latitude, longitude, accuracy, lastUpdated, onRefresh }: LocationHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-          {timezone
-            ? timezone.replace('_', ' ').split('/').pop()
-            : latitude && longitude
-              ? formatCoords(latitude, longitude)
-              : '定位中...'}
+          {cityName || (latitude && longitude ? formatCoords(latitude, longitude) : '定位中...')}
         </h1>
         <div className="flex items-center gap-2 mt-1 text-sm text-white/70">
           {latitude && longitude && (

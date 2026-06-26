@@ -56,6 +56,23 @@ export async function fetchWeather(lat: number, lon: number): Promise<WeatherRes
   }
 }
 
+export async function reverseGeocode(lat: number, lon: number): Promise<string> {
+  const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=zh&zoom=10`
+  const res = await fetch(url, {
+    headers: { 'User-Agent': 'WeatherApp/1.0' },
+  })
+
+  if (!res.ok) {
+    throw new Error(`Geocode error: ${res.status}`)
+  }
+
+  const json = await res.json()
+  if (json.address) {
+    return json.address.city || json.address.town || json.address.county || json.address.state || json.display_name
+  }
+  return json.display_name || `${lat.toFixed(2)}, ${lon.toFixed(2)}`
+}
+
 export async function fetchRadar(): Promise<RadarResponse> {
   const res = await fetch(RAINVIEWER_URL)
 
