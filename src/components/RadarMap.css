@@ -1,0 +1,13 @@
+.radar-container {
+  cursor: grab;
+}
+
+.radar-container:active {
+  cursor: grabbing;
+}
+
+.radar-tile {
+  image-rendering: pixelated;
+  pointer-events: none;
+  opacity: 0.85;
+}
