@@ -85,8 +85,20 @@ describe('fetchRadar', () => {
 
     const result = await fetchRadar()
 
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      'https://api.rainviewer.com/public/weather-maps.json'
+    )
     expect(result.host).toBe('https://tilecache.rainviewer.com')
     expect(result.radar.past[0].time).toBe(1719399600)
     expect(result.radar.past[0].path).toContain('/v2/map/past/')
+  })
+
+  it('should throw on HTTP error', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+    })
+
+    await expect(fetchRadar()).rejects.toThrow('Radar API error: 500')
   })
 })
