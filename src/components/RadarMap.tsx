@@ -49,7 +49,7 @@ export function RadarMap({ frames, host, latitude, longitude }: RadarMapProps) {
   }, [centerTileX, centerTileY])
 
   const tileUrl = frames.length > 0
-    ? `${host}${frames[frameIndex].path}`
+    ? `${host}${frames[frameIndex].path}/256/{z}/{x}/{y}/2/1_1.png`
     : ''
 
   const renderTiles = useCallback(() => {
