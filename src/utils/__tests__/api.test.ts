@@ -120,7 +120,8 @@ describe('searchCity', () => {
     const results = await searchCity('北')
 
     expect(globalThis.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('https://geocoding-api.open-meteo.com/v1/search?name=%E5%8C%97&count=5&language=zh&format=json')
+      expect.stringContaining('https://geocoding-api.open-meteo.com/v1/search?name=%E5%8C%97&count=5&language=zh&format=json'),
+      { signal: undefined }
     )
     expect(results).toHaveLength(2)
     expect(results[0].name).toBe('北京')

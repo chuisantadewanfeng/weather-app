@@ -12,9 +12,11 @@ vi.mock('../../utils/api', () => ({
 
 describe('CitySearch', () => {
   const onSelect = vi.fn()
+  const onClearManual = vi.fn()
 
   beforeEach(() => {
     onSelect.mockClear()
+    onClearManual.mockClear()
   })
 
   it('should display current city name by default', () => {
@@ -68,7 +70,7 @@ describe('CitySearch', () => {
 
   it('should show "back to GPS" option', async () => {
     const user = userEvent.setup()
-    render(<CitySearch currentCityName="上海" onSelect={onSelect} showGpsFallback />)
+    render(<CitySearch currentCityName="上海" onSelect={onSelect} onClearManual={onClearManual} showGpsFallback />)
 
     await user.click(screen.getByText('上海'))
 

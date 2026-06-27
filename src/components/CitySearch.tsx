@@ -54,7 +54,7 @@ export function CitySearch({ currentCityName, onSelect, onClearManual, showGpsFa
 
     setState('searching')
     try {
-      const data = await searchCity(q)
+      const data = await searchCity(q, abortRef.current.signal)
       if (data.length === 0) {
         setState('no_results')
         setResults([])
@@ -170,7 +170,7 @@ export function CitySearch({ currentCityName, onSelect, onClearManual, showGpsFa
                   </button>
                 </div>
               )}
-              {showGpsFallback && (
+              {showGpsFallback && onClearManual && (
                 <button
                   onClick={handleClearManual}
                   className="w-full text-left px-3 py-2.5 hover:bg-white/10 transition-colors border-t border-white/10 text-sm text-sky-300"

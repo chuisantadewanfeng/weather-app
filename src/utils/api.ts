@@ -80,7 +80,7 @@ export async function fetchRadar(): Promise<RadarResponse> {
 
 const GEOCODING_BASE = 'https://geocoding-api.open-meteo.com/v1/search'
 
-export async function searchCity(query: string): Promise<CityResult[]> {
+export async function searchCity(query: string, signal?: AbortSignal): Promise<CityResult[]> {
   const params = new URLSearchParams({
     name: query,
     count: '5',
@@ -88,7 +88,7 @@ export async function searchCity(query: string): Promise<CityResult[]> {
     format: 'json',
   })
 
-  const res = await fetch(`${GEOCODING_BASE}?${params}`)
+  const res = await fetch(`${GEOCODING_BASE}?${params}`, { signal })
 
   if (!res.ok) {
     throw new Error(`Geocoding API error: ${res.status}`)
