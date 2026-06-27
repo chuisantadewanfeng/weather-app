@@ -2,14 +2,13 @@ import { useState, useEffect, useCallback } from 'react'
 import { reverseGeocode } from '../utils/api'
 import type { CityResult, ManualLocation } from '../types/weather'
 
-interface GeolocationState {
+interface AutoGeoState {
   latitude: number | null
   longitude: number | null
   accuracy: number | null
   cityName: string | null
   loading: boolean
   error: string | null
-  manualLocation: ManualLocation | null
 }
 
 const DEFAULT_LAT = 34.7466
@@ -24,14 +23,7 @@ async function fetchCityName(lat: number, lon: number): Promise<string> {
 }
 
 export function useGeolocation() {
-  const [autoState, setAutoState] = useState<{
-    latitude: number | null
-    longitude: number | null
-    accuracy: number | null
-    cityName: string | null
-    loading: boolean
-    error: string | null
-  }>({
+  const [autoState, setAutoState] = useState<AutoGeoState>({
     latitude: null,
     longitude: null,
     accuracy: null,
@@ -40,7 +32,7 @@ export function useGeolocation() {
     error: null,
   })
 
-  const [manualLocation, setManualLocation] = useState<ManualLocation | null>(null)
+  const [manualLocation, setManualLocationState] = useState<ManualLocation | null>(null)
 
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -86,7 +78,7 @@ export function useGeolocation() {
   }, [])
 
   const setManual = useCallback((city: CityResult) => {
-    setManualLocation({
+    setManualLocationState({
       latitude: city.latitude,
       longitude: city.longitude,
       cityName: city.name,
@@ -94,7 +86,7 @@ export function useGeolocation() {
   }, [])
 
   const clearManual = useCallback(() => {
-    setManualLocation(null)
+    setManualLocationState(null)
   }, [])
 
   const effective = manualLocation ?? {
