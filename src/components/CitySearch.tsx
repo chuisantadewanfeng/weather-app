@@ -135,8 +135,7 @@ export function CitySearch({ currentCityName, onSelect, onClearManual, showGpsFa
             className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40
                        focus:outline-none focus:border-white/40 text-sm"
           />
-          {state !== 'idle' && (
-            <div className="absolute top-full mt-1 w-full bg-slate-800 border border-white/20 rounded-lg shadow-xl z-50 overflow-hidden">
+          <div className="absolute top-full mt-1 w-full bg-slate-800 border border-white/20 rounded-lg shadow-xl z-50 overflow-hidden">
               {state === 'searching' && (
                 <div className="px-3 py-4 text-center text-sm text-white/50">搜索中...</div>
               )}
@@ -179,7 +178,6 @@ export function CitySearch({ currentCityName, onSelect, onClearManual, showGpsFa
                 </button>
               )}
             </div>
-          )}
         </div>
       )}
     </div>
