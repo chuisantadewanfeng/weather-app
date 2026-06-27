@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { reverseGeocode } from '../utils/api'
+import type { CityResult, ManualLocation } from '../types/weather'
 
 interface GeolocationState {
   latitude: number | null
@@ -8,6 +9,7 @@ interface GeolocationState {
   cityName: string | null
   loading: boolean
   error: string | null
+  manualLocation: ManualLocation | null
 }
 
 const DEFAULT_LAT = 34.7466
@@ -22,7 +24,14 @@ async function fetchCityName(lat: number, lon: number): Promise<string> {
 }
 
 export function useGeolocation() {
-  const [state, setState] = useState<GeolocationState>({
+  const [autoState, setAutoState] = useState<{
+    latitude: number | null
+    longitude: number | null
+    accuracy: number | null
+    cityName: string | null
+    loading: boolean
+    error: string | null
+  }>({
     latitude: null,
     longitude: null,
     accuracy: null,
@@ -31,9 +40,11 @@ export function useGeolocation() {
     error: null,
   })
 
+  const [manualLocation, setManualLocation] = useState<ManualLocation | null>(null)
+
   useEffect(() => {
     if (!navigator.geolocation) {
-      setState({
+      setAutoState({
         latitude: DEFAULT_LAT,
         longitude: DEFAULT_LON,
         accuracy: null,
@@ -50,7 +61,7 @@ export function useGeolocation() {
         const lon = position.coords.longitude
         const cityName = await fetchCityName(lat, lon)
 
-        setState({
+        setAutoState({
           latitude: lat,
           longitude: lon,
           accuracy: position.coords.accuracy,
@@ -61,7 +72,7 @@ export function useGeolocation() {
       },
       async (err) => {
         const cityName = await fetchCityName(DEFAULT_LAT, DEFAULT_LON)
-        setState({
+        setAutoState({
           latitude: DEFAULT_LAT,
           longitude: DEFAULT_LON,
           accuracy: null,
@@ -74,5 +85,33 @@ export function useGeolocation() {
     )
   }, [])
 
-  return state
+  const setManual = useCallback((city: CityResult) => {
+    setManualLocation({
+      latitude: city.latitude,
+      longitude: city.longitude,
+      cityName: city.name,
+    })
+  }, [])
+
+  const clearManual = useCallback(() => {
+    setManualLocation(null)
+  }, [])
+
+  const effective = manualLocation ?? {
+    latitude: autoState.latitude,
+    longitude: autoState.longitude,
+    cityName: autoState.cityName,
+  }
+
+  return {
+    latitude: effective.latitude,
+    longitude: effective.longitude,
+    accuracy: manualLocation ? null : autoState.accuracy,
+    cityName: effective.cityName,
+    loading: autoState.loading,
+    error: autoState.error,
+    manualLocation,
+    setManualLocation: setManual,
+    clearManualLocation: clearManual,
+  }
 }

@@ -74,3 +74,9 @@ export interface CityResult {
   country: string
   admin1?: string
 }
+
+export interface ManualLocation {
+  latitude: number
+  longitude: number
+  cityName: string
+}
