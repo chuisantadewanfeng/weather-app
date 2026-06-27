@@ -66,3 +66,11 @@ export interface LocationState {
   loading: boolean
   error: string | null
 }
+
+export interface CityResult {
+  name: string
+  latitude: number
+  longitude: number
+  country: string
+  admin1?: string
+}

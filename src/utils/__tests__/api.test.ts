@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { fetchWeather, fetchRadar } from '../api'
+import { fetchWeather, fetchRadar, searchCity } from '../api'
 
 describe('fetchWeather', () => {
   it('should construct correct Open-Meteo URL and return parsed data', async () => {
@@ -100,5 +100,51 @@ describe('fetchRadar', () => {
     })
 
     await expect(fetchRadar()).rejects.toThrow('Radar API error: 500')
+  })
+})
+
+describe('searchCity', () => {
+  it('should call Open-Meteo geocoding API and return parsed results', async () => {
+    const mockResponse = {
+      results: [
+        { name: '北京', latitude: 39.9, longitude: 116.4, country: '中国', admin1: '北京' },
+        { name: '上海', latitude: 31.2, longitude: 121.5, country: '中国', admin1: '上海' },
+      ],
+    }
+
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(mockResponse),
+    })
+
+    const results = await searchCity('北')
+
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('https://geocoding-api.open-meteo.com/v1/search?name=%E5%8C%97&count=5&language=zh&format=json')
+    )
+    expect(results).toHaveLength(2)
+    expect(results[0].name).toBe('北京')
+    expect(results[0].latitude).toBe(39.9)
+    expect(results[0].longitude).toBe(116.4)
+    expect(results[0].country).toBe('中国')
+  })
+
+  it('should return empty array when no results', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ results: null }),
+    })
+
+    const results = await searchCity('xxxxx')
+    expect(results).toEqual([])
+  })
+
+  it('should throw on HTTP error', async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+    })
+
+    await expect(searchCity('test')).rejects.toThrow('Geocoding API error: 500')
   })
 })

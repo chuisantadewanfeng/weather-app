@@ -1,4 +1,4 @@
-import type { WeatherResponse, RadarResponse } from '../types/weather'
+import type { WeatherResponse, RadarResponse, CityResult } from '../types/weather'
 
 const OPEN_METEO_BASE = 'https://api.open-meteo.com/v1/forecast'
 const RAINVIEWER_URL = 'https://api.rainviewer.com/public/weather-maps.json'
@@ -76,4 +76,24 @@ export async function fetchRadar(): Promise<RadarResponse> {
   }
 
   return res.json()
+}
+
+const GEOCODING_BASE = 'https://geocoding-api.open-meteo.com/v1/search'
+
+export async function searchCity(query: string): Promise<CityResult[]> {
+  const params = new URLSearchParams({
+    name: query,
+    count: '5',
+    language: 'zh',
+    format: 'json',
+  })
+
+  const res = await fetch(`${GEOCODING_BASE}?${params}`)
+
+  if (!res.ok) {
+    throw new Error(`Geocoding API error: ${res.status}`)
+  }
+
+  const json = await res.json()
+  return json.results ?? []
 }
