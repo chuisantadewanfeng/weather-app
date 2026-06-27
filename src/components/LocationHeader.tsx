@@ -1,3 +1,6 @@
+import type { CityResult } from '../types/weather'
+import { CitySearch } from './CitySearch'
+
 interface LocationHeaderProps {
   cityName: string | null
   latitude: number | null
@@ -5,6 +8,9 @@ interface LocationHeaderProps {
   accuracy: number | null
   lastUpdated: string | null
   onRefresh: () => void
+  onCitySelect: (city: CityResult) => void
+  onClearManual?: () => void
+  showGpsFallback?: boolean
 }
 
 function formatCoords(lat: number, lon: number): string {
@@ -18,13 +24,23 @@ function formatTime(isoString: string): string {
   return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
 }
 
-export function LocationHeader({ cityName, latitude, longitude, accuracy, lastUpdated, onRefresh }: LocationHeaderProps) {
+export function LocationHeader({
+  cityName, latitude, longitude, accuracy, lastUpdated, onRefresh,
+  onCitySelect, onClearManual, showGpsFallback,
+}: LocationHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-          {cityName || (latitude && longitude ? formatCoords(latitude, longitude) : '定位中...')}
-        </h1>
+        {cityName ? (
+          <CitySearch
+            currentCityName={cityName}
+            onSelect={onCitySelect}
+            onClearManual={onClearManual}
+            showGpsFallback={showGpsFallback}
+          />
+        ) : (
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">定位中...</h1>
+        )}
         <div className="flex items-center gap-2 mt-1 text-sm text-white/70">
           {latitude && longitude && (
             <span>{formatCoords(latitude, longitude)}</span>

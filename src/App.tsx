@@ -46,6 +46,9 @@ function App() {
             weather.refresh()
             radar.refresh()
           }}
+          onCitySelect={geo.setManualLocation}
+          onClearManual={geo.clearManualLocation}
+          showGpsFallback={geo.manualLocation !== null}
         />
 
         {weather.error && (
